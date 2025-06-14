@@ -19,20 +19,7 @@ Jet reconstruction in an ultra-relativistic heavy-ion collision suffers from a n
   - Energy correlation functions.
 - As such, preserves jet substructure while removing thermal background.
 
-## Technical Implementation
-
-### Architecture
-
-The model is based on the Swin Transformer architecture with the following key components:
-- Input: Noisy jet images (64x64 pixels).
-- Swin Transformer layers with:
-  - 6 stages of depth.
-  - 180 embedding dimensions.
-  - 6 attention heads per stage.
-  - Window size of 8.
-- Output: Denoised jet images.
-
-### Pre-trained Models
+## Pre-trained Models
 
 The training process maintains:
 - Regular checkpoints: `models/model_{epoch}`
