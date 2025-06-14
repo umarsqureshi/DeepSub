@@ -51,10 +51,10 @@ The training process maintains:
 
 ## Dependencies
 
-- PyTorch
+- pytorch torchvision
+- timm
 - tqdm
 - numpy
-- swinIR (custom implementation)
 
 ## Citation
 
