@@ -1,6 +1,5 @@
 """
 Configuration parameters for training.
-This module contains all the hyperparameters and configuration settings.
 """
 
 # Training parameters
