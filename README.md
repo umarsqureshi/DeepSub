@@ -58,7 +58,7 @@ The training process maintains:
 
 ## Acknowledgements
 
-This project is based on SwinTR ([paper](https://arxiv.org/abs/2103.14030) ([arxiv.org][1]), [code](https://github.com/microsoft/Swin-Transformer) ([github.com][2])) and SwinIR ([paper](https://arxiv.org/abs/2108.10257) ([arxiv.org][3]), [code](https://github.com/JingyunLiang/SwinIR) ([github.com][4])). Thanks for their outstanding work and code ❤️.
+This project is based on SwinTR ([paper](https://arxiv.org/abs/2103.14030), [code](https://github.com/microsoft/Swin-Transformer) and SwinIR ([paper](https://arxiv.org/abs/2108.10257), [code](https://github.com/JingyunLiang/SwinIR). Thanks for their outstanding work and code ❤️.
 
 ## Citation
 
