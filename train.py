@@ -6,7 +6,7 @@ print("Importing libraries...")
 
 import torch
 from torch.utils.data import DataLoader
-from swinIR import SwinIR as net
+from model import SwinIR as net
 from dataset import JetImageDataset
 from trainer import train_model
 from config import BATCH_SIZE, NUM_EPOCHS, LEARNING_RATE, MODEL_CONFIG
