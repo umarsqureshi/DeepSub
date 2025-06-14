@@ -1,30 +1,30 @@
 # DeepSub: Deep Learning for Thermal Background Subtraction in Heavy-Ion Collisions
 
-## Abstract
-
-Jet reconstruction in an ultra-relativistic heavy-ion collision suffers from a notoriously large thermal background. Traditional background subtraction methods struggle to remove this soft background while preserving the jet's hard substructure. In this Letter, we present $\texttt{DeepSub}$, the first machine learning-based approach for full-event background subtraction. $\texttt{DeepSub}$ utilizes Swin Transformer layers to denoise jet images and effectively disentangle hard jets from the heavy-ion background. $\texttt{DeepSub}$ significantly outperforms existing subtraction techniques on key observables, achieving sub-percent to percent level closure on jet $p_\mathrm{T}$, mass, girth, and energy correlation functions. As such, $\texttt{DeepSub}$ paves the way for precision measurements in heavy-ion collisions.
-
 ## Overview
 
-DeepSub is a novel deep learning approach for background subtraction in heavy-ion collisions. It employs a Swin Transformer architecture to process jet images and separate the hard jet signal from the thermal background. The model is trained to preserve important jet substructure observables while effectively removing the underlying event background.
+This is the official repository for DeepSub, a novel deep learning approach for background subtraction in heavy-ion collisions. DeepSub employs a Swin Transformer-based architecture for image restoration to process jet images and separate the hard jet signal from the thermal background. The model is trained to preserve jet substructure observables while effectively removing the underlying event background.
+
+## Abstract
+
+Jet reconstruction in an ultra-relativistic heavy-ion collision suffers from a notoriously large thermal background. Traditional background subtraction methods struggle to remove this soft background while preserving the jet's hard substructure. In this study, we present $\texttt{DeepSub}$, the first machine learning-based approach for full-event background subtraction. $\texttt{DeepSub}$ utilizes Swin Transformer layers to denoise jet images and effectively disentangle hard jets from the heavy-ion background. $\texttt{DeepSub}$ significantly outperforms existing subtraction techniques on key observables, achieving sub-percent to percent-level closure on distributions of jet $p_\mathrm{T}$, mass, girth, and energy correlation functions. As such, $\texttt{DeepSub}$ paves the way for precision measurements in heavy-ion collisions.
 
 ## Key Features
 
-- First machine learning-based approach for full-event background subtraction
-- Utilizes Swin Transformer architecture for effective image processing
+- First machine learning-based approach for full-event background subtraction.
+- Utilizes Swin Transformer architecture for effective image processing.
 - Achieves sub-percent to percent level closure on key jet observables:
-  - Jet $p_\mathrm{T}$
-  - Jet mass
-  - Jet girth
-  - Energy correlation functions
-- Preserves jet substructure while removing thermal background
+  - Jet $p_\mathrm{T}$.
+  - Jet mass.
+  - Jet girth.
+  - Energy correlation functions.
+- As such, preserves jet substructure while removing thermal background.
 
 ## Technical Implementation
 
 ### Architecture
 
 The model is based on the Swin Transformer architecture with the following key components:
-- Input: Jet images (64x64 pixels)
+- Input: Noisy jet images (64x64 pixels).
 - Swin Transformer layers with:
   - 6 stages of depth
   - 180 embedding dimensions
