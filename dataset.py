@@ -13,16 +13,16 @@ class JetImageDataset(Dataset):
     This dataset handles pairs of input and filtered images for training.
     """
     
-    def __init__(self, input_images, filtered_images):
+    def __init__(self, input_images, truth_images):
         """
         Initialize the dataset with input and filtered images.
         
         Args:
             input_images (numpy.ndarray): Input images array
-            filtered_images (numpy.ndarray): Target filtered images array
+            filtered_images (numpy.ndarray): Target truth images array
         """
         self.X = torch.tensor(input_images, dtype=torch.float32).unsqueeze(1)
-        self.Y = torch.tensor(filtered_images, dtype=torch.float32).unsqueeze(1)
+        self.Y = torch.tensor(truth_images, dtype=torch.float32).unsqueeze(1)
 
     def __len__(self):
         """
