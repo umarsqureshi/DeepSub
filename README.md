@@ -6,9 +6,9 @@ This is the official repository for DeepSub, a novel deep learning approach for 
 
 ## Abstract
 
-Jet reconstruction in an ultra-relativistic heavy-ion collision suffers from a notoriously large thermal background. Traditional background subtraction methods struggle to remove this soft background while preserving the jet's hard substructure. In this study, we present $\texttt{DeepSub}$, the first machine learning-based approach for full-event background subtraction. $\texttt{DeepSub}$ utilizes Swin Transformer layers to denoise jet images and effectively disentangle hard jets from the heavy-ion background. $\texttt{DeepSub}$ significantly outperforms existing subtraction techniques on key observables, achieving sub-percent to percent-level closure on distributions of jet $p_\mathrm{T}$, mass, girth, and energy correlation functions. As such, $\texttt{DeepSub}$ paves the way for precision measurements in heavy-ion collisions.
+Jet reconstruction in an ultra-relativistic heavy-ion collision suffers from a notoriously large thermal background. Traditional background subtraction methods struggle to remove this soft background while preserving the jet's hard substructure. In this study, we present DeepSub, the first machine learning-based approach for full-event background subtraction. DeepSub utilizes Swin Transformer layers to denoise jet images and effectively disentangle hard jets from the heavy-ion background. DeepSub significantly outperforms existing subtraction techniques on key observables, achieving sub-percent to percent-level closure on distributions of jet $p_\mathrm{T}$, mass, girth, and energy correlation functions. As such, DeepSub paves the way for precision measurements in heavy-ion collisions.
 
-## Key Features
+## Key Highlights
 
 - First machine learning-based approach for full-event background subtraction.
 - Utilizes Swin Transformer architecture for effective image processing.
@@ -26,22 +26,13 @@ Jet reconstruction in an ultra-relativistic heavy-ion collision suffers from a n
 The model is based on the Swin Transformer architecture with the following key components:
 - Input: Noisy jet images (64x64 pixels).
 - Swin Transformer layers with:
-  - 6 stages of depth
-  - 180 embedding dimensions
-  - 6 attention heads per stage
-  - Window size of 8
-- Output: Denoised jet images
+  - 6 stages of depth.
+  - 180 embedding dimensions.
+  - 6 attention heads per stage.
+  - Window size of 8.
+- Output: Denoised jet images.
 
-### Training
-
-The model is trained using:
-- MSE loss function
-- Adam optimizer
-- Learning rate: 7e-5
-- Batch size: 128
-- Training epochs: 15
-
-### Model Checkpoints
+### Pre-trained Models
 
 The training process maintains:
 - Regular checkpoints: `models/model_{epoch}`
