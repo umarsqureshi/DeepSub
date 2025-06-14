@@ -1,6 +1,5 @@
 """
 Main training script for the SwinIR model.
-This script orchestrates the training process using the modular components.
 """
 
 print("Importing libraries...")
