@@ -1,10 +1,7 @@
 """
 Implementation of the SwinIR backbone for DeepSub.
+Based on code written initially by Ze Liu, subsequently modified by Jingyun Liang.
 """
-
-# -----------------------------------------------------------------------------------
-# Based on code written initially by Ze Liu, subsequently modified by Jingyun Liang.
-# -----------------------------------------------------------------------------------
 
 import math
 import torch
