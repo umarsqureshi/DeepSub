@@ -1,6 +1,5 @@
 """
 Training utilities for the SwinIR model.
-This module contains the training loop and related functions.
 """
 
 import torch
