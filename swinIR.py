@@ -1,5 +1,9 @@
+"""
+Implementation of the SwinIR backbone for DeepSub.
+"""
+
 # -----------------------------------------------------------------------------------
-# Based on code written by Ze Liu, Modified by Jingyun Liang.
+# Based on code written initially by Ze Liu, subsequently modified by Jingyun Liang.
 # -----------------------------------------------------------------------------------
 
 import math
@@ -734,8 +738,6 @@ class SwinIR(nn.Module):
                                                  nn.LeakyReLU(negative_slope=0.2, inplace=True),
                                                  nn.Conv2d(embed_dim // 4, embed_dim, 3, 1, 1))
 
-        #####################################################################################################
-        ################################ 3, high quality image reconstruction ################################
         if self.upsampler == 'pixelshuffle':
             # for classical SR
             self.conv_before_upsample = nn.Sequential(nn.Conv2d(embed_dim, num_feat, 3, 1, 1),
