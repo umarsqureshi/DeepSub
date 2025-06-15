@@ -28,11 +28,26 @@ Jet reconstruction in an ultra-relativistic heavy-ion collision suffers from a n
 1. Prepare your datasets:
    - Training data: `datasets/train.pt`
    - Validation data: `datasets/val.pt`
+   - Test data: `datasets/test.pt`
 
 2. Run the training:
    ```bash
    python train.py
    ```
+
+3. Compute jet observables:
+   ```bash
+   python compute_obs.py
+   ```
+   This will load the test dataset and the trained model checkpoint `models/best_model`, and save NumPy arrays of truth and reconstructed observables in the `obs/` directory:
+   - `obs/truth_pt.npy`
+   - `obs/truth_mass.npy`
+   - `obs/truth_girth.npy`
+   - `obs/truth_ecf.npy`
+   - `obs/reco_pt.npy`
+   - `obs/reco_mass.npy`
+   - `obs/reco_girth.npy`
+   - `obs/reco_ecf.npy`
 
 ## Dependencies
 
