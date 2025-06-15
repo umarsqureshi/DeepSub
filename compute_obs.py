@@ -1,6 +1,6 @@
 """
 Script to compute jet observables from reconstructed and truth jet images
-using a SwinIR model for image reconstruction and FastJet for jet clustering.
+using the DeepSub model for image reconstruction and FastJet for jet clustering.
 """
 
 import numpy as np
