@@ -21,9 +21,7 @@ Jet reconstruction in an ultra-relativistic heavy-ion collision suffers from a n
 
 ## Pre-trained Models
 
-The training process maintains:
-- Regular checkpoints: `models/model_{epoch}`
-- Best model: `models/best_model` (saved when validation loss improves)
+- Best model (based on validation loss) `models/best_model.pt` is saved in the models directory.
 
 ## Usage
 
