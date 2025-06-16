@@ -49,6 +49,16 @@ Jet reconstruction in an ultra-relativistic heavy-ion collision suffers from a n
    - `obs/reco_girth.npy`
    - `obs/reco_ecf.npy`
 
+4. Generate comparison plots:
+   ```bash
+   python plot.py
+   ```
+   This reads the saved `.npy` files in `obs/` (including ICS arrays if present) and saves figure files to the `figs/` directory, for example:
+   - `jetPT.png`
+   - `jet_mass.png`
+   - `jet_girth.png`
+   - `ecf.png`
+
 ## Dependencies
 
 - pytorch torchvision
@@ -59,8 +69,6 @@ Jet reconstruction in an ultra-relativistic heavy-ion collision suffers from a n
 ## Acknowledgements
 
 This project is based on SwinTR ([paper](https://arxiv.org/abs/2103.14030), [code](https://github.com/microsoft/Swin-Transformer)) and SwinIR ([paper](https://arxiv.org/abs/2108.10257), [code](https://github.com/JingyunLiang/SwinIR)). Thanks for their outstanding work and code ❤️.
-
-We also thank the Data Science Institute (DSI) at Vanderbilt University for generously providing compute grants and resources, including access to the DGX A100 AI Computing Server, which made this research possible.
 
 ## Citation
 
