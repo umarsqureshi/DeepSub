@@ -9,6 +9,7 @@ Plotting macros for reconstructed, event-wide ICS vs. truth jet observables:
 Loads NumPy arrays from the 'obs' directory and saves figures to 'figs'.
 """
 
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
@@ -266,6 +267,7 @@ def plot_ecf(obs_dir, figs_dir):
 
 def main():
     """Main entry point: configure plotting and generate all figures."""
+    os.makedirs("obs", exist_ok=True)
     obs_dir = Path("obs")
     figs_dir = Path("figs")
     figs_dir.mkdir(parents=True, exist_ok=True)

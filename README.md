@@ -33,6 +33,11 @@ Jet reconstruction in an ultra-relativistic heavy-ion collision suffers from a n
   - Energy correlation functions.
 - As such, preserves jet substructure while removing thermal background.
 
+## Preprocessed Data
+
+The full dataset used in this study is available at DOI: [10.5281/zenodo.14213191](https://doi.org/10.5281/zenodo.14213191).
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15674391.svg)](https://doi.org/10.5281/zenodo.15674391)
 
 
 
@@ -42,10 +47,12 @@ Jet reconstruction in an ultra-relativistic heavy-ion collision suffers from a n
 
 ## Usage
 
-1. Prepare your datasets:
-   - Training data: `datasets/train.pt`
-   - Validation data: `datasets/val.pt`
-   - Test data: `datasets/test.pt`
+1. Download preprocessed data:
+   ```bash
+   python download_data.py
+   ```
+   This will create the `datasets/` directory and download `train.pt`, `val.pt`, and `test.pt`.
+
 
 2. Run the training:
    ```bash

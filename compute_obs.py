@@ -4,6 +4,7 @@ using the DeepSub model for image reconstruction and FastJet for jet clustering.
 """
 
 import numpy as np
+import os
 import torch
 from tqdm import tqdm
 import fastjet as fj
@@ -206,6 +207,9 @@ def main():
         "reco_girth": reco_girth,
         "reco_ecf": reco_ecf,
     }
+
+    os.makedirs("obs", exist_ok=True)
+
     for name, data in obs_map.items():
         np.save(f"obs/{name}", data)
         print(f"Saved {name} to obs/{name}.npy")
