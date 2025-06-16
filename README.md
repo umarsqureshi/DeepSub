@@ -10,6 +10,16 @@ Jet reconstruction in an ultra-relativistic heavy-ion collision suffers from a n
 
 ## Key Highlights
 
+<p align="center">
+  <img src="figs/jetPT.png" alt="Jet pT" width="45%" />
+  <img src="figs/jet_mass.png" alt="Jet Mass" width="45%" />
+</p>
+<p align="center">
+  <img src="figs/jet_girth.png" alt="Jet Girth" width="45%" />
+  <img src="figs/ecf.png" alt="ECF" width="45%" />
+</p>
+
+
 - First machine learning-based approach for full-event background subtraction.
 - Utilizes Swin Transformer architecture for effective image processing.
 - Achieves sub-percent to percent level closure on key jet observables:
@@ -18,6 +28,9 @@ Jet reconstruction in an ultra-relativistic heavy-ion collision suffers from a n
   - Jet girth.
   - Energy correlation functions.
 - As such, preserves jet substructure while removing thermal background.
+
+
+
 
 ## Pre-trained Models
 
