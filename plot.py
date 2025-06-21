@@ -1,6 +1,7 @@
 """
-Plotting macros for reconstructed, event-wide ICS vs. truth jet observables:
+plot.py
 
+Generate comparison plots for reconstructed vs. truth jet observables:
 - Jet pT
 - Jet mass
 - Jet girth
@@ -9,7 +10,6 @@ Plotting macros for reconstructed, event-wide ICS vs. truth jet observables:
 Loads NumPy arrays from the 'obs' directory and saves figures to 'figs'.
 """
 
-import os
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
@@ -80,9 +80,9 @@ def plot_pt(obs_dir, figs_dir):
 
     # Annotation
     ax_main.text(
-        690, 0.225e-3,
+        560, 1.55*0.255e-3,
         "\\textsc{Jewel} Dijets, $\\sqrt{s_{\\mathrm{NN}}}=5.02$ TeV,\n"
-        "0-10\\% Centrality, $\\widehat{p}_{\\mathrm{T}}> 100$ GeV,\n"
+        "0-10\\% Centrality, $v_2=0.05$, $\\widehat{p}_{\\mathrm{T}}> 100$ GeV,\n"
         "Anti-$k_{\\mathrm{T}}$, $R=0.4$, $p_{\\mathrm{T}}^{\\mathrm{jet}} > 100$ GeV.",
         fontsize=18
     )
@@ -137,9 +137,9 @@ def plot_mass(obs_dir, figs_dir):
     ax_ratio.set_ylim([0, 2])
 
     ax_main.text(
-        78, 0.225e-2,
+        62, 1.75*0.225e-2,
         "\\textsc{Jewel} Dijets, $\\sqrt{s_{\\mathrm{NN}}}=5.02$ TeV,\n"
-        "0-10\\% Centrality, $\\widehat{p}_{\\mathrm{T}}> 100$ GeV,\n"
+        "0-10\\% Centrality, $v_2=0.05$, $\\widehat{p}_{\\mathrm{T}}> 100$ GeV,\n"
         "Anti-$k_{\\mathrm{T}}$, $R=0.4$, $p_{\\mathrm{T}}^{\\mathrm{jet}} > 100$ GeV.",
         fontsize=18
     )
@@ -196,7 +196,7 @@ def plot_girth(obs_dir, figs_dir):
     ax_main.text(
         0.075, 1.45,
         "\\textsc{Jewel} Dijets, $\\sqrt{s_{\\mathrm{NN}}}=5.02$ TeV,\n"
-        "0-10\\% Centrality, $\\widehat{p}_{\\mathrm{T}}> 100$ GeV,\n"
+        "0-10\\% Centrality, $v_2=0.05$, $\\widehat{p}_{\\mathrm{T}}> 100$ GeV,\n"
         "Anti-$k_{\\mathrm{T}}$, $R=0.4$, $p_{\\mathrm{T}}^{\\mathrm{jet}} > 100$ GeV.",
         fontsize=18
     )
@@ -267,7 +267,6 @@ def plot_ecf(obs_dir, figs_dir):
 
 def main():
     """Main entry point: configure plotting and generate all figures."""
-    os.makedirs("obs", exist_ok=True)
     obs_dir = Path("obs")
     figs_dir = Path("figs")
     figs_dir.mkdir(parents=True, exist_ok=True)

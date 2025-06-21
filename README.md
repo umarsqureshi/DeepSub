@@ -35,7 +35,7 @@ Jet reconstruction in an ultra-relativistic heavy-ion collision suffers from a n
 
 ## Preprocessed Data
 
-The full dataset used in this study is available at DOI: [10.5281/zenodo.14213191](https://doi.org/10.5281/zenodo.14213191).
+The full dataset used in this study is available at DOI: [10.5281/zenodo.15674391](https://doi.org/10.5281/zenodo.15674391).
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15674391.svg)](https://doi.org/10.5281/zenodo.15674391)
 
