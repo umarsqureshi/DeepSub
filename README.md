@@ -93,18 +93,3 @@ The full dataset used in this study is available at DOI: [10.5281/zenodo.1567439
 ## Acknowledgements
 
 This project is based on SwinTR ([paper](https://arxiv.org/abs/2103.14030), [code](https://github.com/microsoft/Swin-Transformer)) and SwinIR ([paper](https://arxiv.org/abs/2108.10257), [code](https://github.com/JingyunLiang/SwinIR)). Thanks for their outstanding work and code ❤️.
-
-## Citation
-
-If you use this code in your research, please cite our paper:
-```
-[Citation information to be added]
-```
-
-## License
-
-[License information to be added]
-
-## Contact
-
-[Contact information to be added]
