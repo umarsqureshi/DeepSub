@@ -6,7 +6,7 @@
 
 ## Overview
 
-This is the official repository for DeepSub, a novel deep learning approach for background subtraction in heavy-ion collisions. DeepSub employs a generative Swin Transformer-based architecture for image restoration to process jet images and separate the hard jet signal from the thermal background. The model is trained to preserve jet substructure observables while effectively removing the underlying event background. 
+This is the official repository for <span style="font-variant:small-caps;">DeepSub</span>, a novel deep learning approach for background subtraction in heavy-ion collisions. <span style="font-variant:small-caps;">DeepSub</span> employs a generative Swin Transformer-based architecture for image restoration to process jet images and separate the hard jet signal from the thermal background. The model is trained to preserve jet substructure observables while effectively removing the underlying event background. 
 
 ## Abstract
 
