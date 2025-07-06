@@ -1,7 +1,6 @@
 """
-plot.py
-
 Generate comparison plots for reconstructed vs. truth jet observables:
+
 - Jet pT
 - Jet mass
 - Jet girth
@@ -13,6 +12,7 @@ Loads NumPy arrays from the 'obs' directory and saves figures to 'figs'.
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
+import mplhep as hep
 
 
 def configure_matplotlib():
@@ -35,234 +35,130 @@ def create_ratio_axes(figsize=(10, 10), height_ratios=(3, 1), hspace=0):
     return fig, ax_main, ax_ratio
 
 
-def plot_pt(obs_dir, figs_dir):
-    """Plot jet pT distribution and ratio."""
+def _hist_stats(data: np.ndarray, bins: np.ndarray):
+    """Return (counts, densities, poisson_sigma)."""
+    counts, _ = np.histogram(data, bins)
+    widths = np.diff(bins)
+    total = counts.sum() if counts.sum() > 0 else 1  # avoid div-by-zero
+    dens = counts / (total * widths)
+    sigma = np.sqrt(counts) / (total * widths)
+    return counts, dens, sigma
+
+
+def _ratio(numer_dens, numer_sigma, denom_dens, denom_sigma):
+    """Return ratio and its propagated uncertainty."""
+    ratio = np.divide(numer_dens, denom_dens, out=np.zeros_like(numer_dens), where=denom_dens != 0)
+    sigma = np.zeros_like(ratio)
+    mask = (numer_dens > 0) & (denom_dens > 0)
+    sigma[mask] = ratio[mask] * np.sqrt((numer_sigma[mask] / numer_dens[mask]) ** 2 + (denom_sigma[mask] / denom_dens[mask]) ** 2)
+    return ratio, sigma
+
+
+def _annotate(ax, text, **kwargs):
+    if text:
+        ax.text(*text, fontsize=19, transform=ax.transData, **kwargs)
+
+
+def hist_ratio_plot(truth, reco, ics, *, bins, xlabel, out_name, xscale="linear", xlim=None, annotation=None):
+    """Generic histogram + ratio plot with mplhep styling."""
+
+    # Statistics
+    cnt_reco, dens_reco, sig_reco = _hist_stats(reco, bins)
+    cnt_ics,  dens_ics,  sig_ics  = _hist_stats(ics,  bins)
+    cnt_truth, dens_truth, sig_truth = _hist_stats(truth, bins)
+
+    ratio_reco, sig_ratio_reco = _ratio(dens_reco, sig_reco, dens_truth, sig_truth)
+    ratio_ics,  sig_ratio_ics  = _ratio(dens_ics,  sig_ics,  dens_truth, sig_truth)
+
+    fig = plt.figure(figsize=(10, 10))
+    gs = fig.add_gridspec(2, height_ratios=[3, 1], hspace=0)
+    ax_main, ax_ratio = gs.subplots(sharex=True)
+
+    hep.histplot(cnt_reco, bins, yerr=True, ax=ax_main, density=True,
+                 histtype="step", color="red",   linestyle="dashed", linewidth=2,
+                 label="\\textsc{DeepSub} (Ours)")
+    hep.histplot(cnt_ics,  bins, yerr=True, ax=ax_main, density=True,
+                 histtype="step", color="green", linestyle="dashed", linewidth=2,
+                 label="Event-Wide ICS")
+    hep.histplot(cnt_truth, bins, yerr=True, ax=ax_main, density=True,
+                 histtype="fill", alpha=0.5, label="Truth")
+    hep.histplot(cnt_truth, bins, yerr=True, ax=ax_main, density=True,
+                 histtype="step", alpha=0.5, color="#1f77b4")
+
+    ax_main.set_ylabel("Events [a.u.]", fontsize=30)
+    ax_main.set_yscale("log")
+    ax_main.legend(fontsize=19, loc="upper right")
+
+    _annotate(ax_main, annotation)
+
+    # Ratio pad and truth uncertainty band
+    lower = 1 - sig_truth / dens_truth
+    upper = 1 + sig_truth / dens_truth
+    lower = np.append(lower, lower[-1])
+    upper = np.append(upper, upper[-1])
+    ax_ratio.fill_between(bins, lower, upper, step="post", color="yellow", alpha=0.5, label="Truth uncertainty")
+
+    hep.histplot(ratio_reco, bins, yerr=sig_ratio_reco, ax=ax_ratio,
+                 histtype="step", color="red", linestyle="dashed", linewidth=2,
+                 label="DeepSub / Truth")
+    hep.histplot(ratio_ics,  bins, yerr=sig_ratio_ics,  ax=ax_ratio,
+                 histtype="step", color="green", linestyle="dashed", linewidth=2,
+                 label="ICS / Truth")
+
+    ax_ratio.axhline(1, linestyle="dashed", color="black")
+    ax_ratio.set_xlabel(xlabel, fontsize=30)
+    ax_ratio.set_ylabel(r"$\\frac{\\textrm{Predicted}}{\\textrm{Truth}}$", fontsize=30)
+    ax_ratio.set_ylim(0, 2)
+
+    # Common cosmetics
+    if xscale == "log":
+        ax_main.set_xscale("log")
+        ax_ratio.set_xscale("log")
+    if xlim:
+        ax_main.set_xlim(*xlim)
+
+    plt.savefig(out_name, bbox_inches="tight", dpi=400)
+    plt.close(fig)
+
+
+def plot_pt(obs_dir: Path, figs_dir: Path):
     truth = np.load(obs_dir / "truth_pt.npy")
-    reco = np.load(obs_dir / "reco_pt.npy")
-    ics = np.load(obs_dir / "ics_pt.npy")
+    reco  = np.load(obs_dir / "reco_pt.npy")
+    ics   = np.load(obs_dir / "ics_pt.npy")
     bins = np.linspace(100, 1200, 20)
-
-    fig, ax_main, ax_ratio = create_ratio_axes()
-    # Main histogram
-    n_reco, _, _ = ax_main.hist(
-        reco, bins,
-        histtype='step', linewidth=2, linestyle='dashed',
-        label='\\textsc{DeepSub} (Ours)', density=True, color='red'
-    )
-    n_truth, _, _ = ax_main.hist(
-        truth, bins, alpha=0.5,
-        label='Truth', density=True
-    )
-    n_ics, _, _ = ax_main.hist(
-        ics, bins,
-        histtype='step', linewidth=2, linestyle='dashed',
-        label='Event-Wide ICS', density=True, color='green'
-    )
-    ax_main.set_yscale('log')
-    ax_main.set_ylabel('Events [a.u.]', fontsize=30)
-    ax_main.legend(loc='upper right', fontsize=18)
-
-    # Ratio subplot
-    ax_ratio.set_xlabel('Jet $p_{\\mathrm{T}}$ [GeV]', fontsize=30)
-    ax_ratio.set_ylabel(r'$\\frac{\\textrm{Predicted}}{\\textrm{Truth}}$', fontsize=30)
-    ratio = n_reco / n_truth
-    ratio_ics = n_ics / n_truth
-    ax_ratio.hist(
-        bins[:-1], bins, weights=ratio,
-        histtype='step', linewidth=2, linestyle='dashed', color='red'
-    )
-    ax_ratio.hist(
-        bins[:-1], bins, weights=ratio_ics,
-        histtype='step', linewidth=2, linestyle='dashed', color='green'
-    )
-    ax_ratio.plot([0, 123232323], [1, 1], color='black', linestyle='dashed')
-    ax_ratio.set_ylim([0, 2])
-
-    # Annotation
-    ax_main.text(
-        560, 1.55*0.255e-3,
-        "\\textsc{Jewel} Dijets, $\\sqrt{s_{\\mathrm{NN}}}=5.02$ TeV,\n"
-        "0-10\\% Centrality, $v_2=0.05$, $\\widehat{p}_{\\mathrm{T}}> 100$ GeV,\n"
-        "Anti-$k_{\\mathrm{T}}$, $R=0.4$, $p_{\\mathrm{T}}^{\\mathrm{jet}} > 100$ GeV.",
-        fontsize=18
-    )
-
-    out_path = figs_dir / "jetPT.png"
-    fig.savefig(out_path, bbox_inches='tight', dpi=200)
-    print(f"Saved {out_path}")
-    plt.close(fig)
+    annotation = (180, 1.55e-5, "\\textsc{Jewel} Dijets, $\\sqrt{s_{\\mathrm{NN}}}=5.02$ TeV,\n0-10\\% Centrality, $v_2=0.05$, $\\widehat{p}_{\\mathrm{T}}> 100$ GeV,\n Anti-$k_{\\mathrm{T}}$, $R=0.4$, $p_{\\mathrm{T}}^{\\mathrm{jet}} > 100$ GeV.")
+    hist_ratio_plot(truth, reco, ics, bins=bins, xlabel='Jet $p_{\\mathrm{T}}$ [GeV]',
+                    out_name=figs_dir / "jetPT.png", xlim=(100, 1200), annotation=annotation)
 
 
-def plot_mass(obs_dir, figs_dir):
-    """Plot jet mass distribution and ratio."""
+def plot_mass(obs_dir: Path, figs_dir: Path):
     truth = np.load(obs_dir / "truth_mass.npy")
-    reco = np.load(obs_dir / "reco_mass.npy")
-    ics = np.load(obs_dir / "ics_mass.npy")
+    reco  = np.load(obs_dir / "reco_mass.npy")
+    ics   = np.load(obs_dir / "ics_mass.npy")
     bins = np.linspace(3, 140, 20)
-
-    fig, ax_main, ax_ratio = create_ratio_axes()
-    n_reco, _, _ = ax_main.hist(
-        reco, bins,
-        histtype='step', linewidth=2, linestyle='dashed',
-        label='\\textsc{DeepSub} (Ours)', density=True, color='red'
-    )
-    n_truth, _, _ = ax_main.hist(
-        truth, bins, alpha=0.5,
-        label='Truth', density=True
-    )
-    n_ics, _, _ = ax_main.hist(
-        ics, bins,
-        histtype='step', linewidth=2, linestyle='dashed',
-        label='Event-Wide ICS', density=True, color='green'
-    )
-    ax_main.set_yscale('log')
-    ax_main.set_xlim(3, 140)
-    ax_main.set_ylim(0.25e-4, 0.9e-1)
-    ax_main.set_ylabel('Events [a.u.]', fontsize=30)
-    ax_main.legend(loc='upper right', fontsize=18)
-
-    ax_ratio.set_xlabel('Jet Mass [GeV]', fontsize=30)
-    ax_ratio.set_ylabel(r'$\\frac{\\textrm{Predicted}}{\\textrm{Truth}}$', fontsize=30)
-    ratio = n_reco / n_truth
-    ratio_ics = n_ics / n_truth
-    ax_ratio.hist(
-        bins[:-1], bins, weights=ratio,
-        histtype='step', linewidth=2, linestyle='dashed', color='red'
-    )
-    ax_ratio.hist(
-        bins[:-1], bins, weights=ratio_ics,
-        histtype='step', linewidth=2, linestyle='dashed', color='green'
-    )
-    ax_ratio.plot([0, 123232323], [1, 1], color='black', linestyle='dotted')
-    ax_ratio.set_ylim([0, 2])
-
-    ax_main.text(
-        62, 1.75*0.225e-2,
-        "\\textsc{Jewel} Dijets, $\\sqrt{s_{\\mathrm{NN}}}=5.02$ TeV,\n"
-        "0-10\\% Centrality, $v_2=0.05$, $\\widehat{p}_{\\mathrm{T}}> 100$ GeV,\n"
-        "Anti-$k_{\\mathrm{T}}$, $R=0.4$, $p_{\\mathrm{T}}^{\\mathrm{jet}} > 100$ GeV.",
-        fontsize=18
-    )
-
-    out_path = figs_dir / "jet_mass.png"
-    fig.savefig(out_path, bbox_inches='tight', dpi=200)
-    print(f"Saved {out_path}")
-    plt.close(fig)
+    annotation = (12, 0.7e-4, "\\textsc{Jewel} Dijets, $\\sqrt{s_{\\mathrm{NN}}}=5.02$ TeV,\n 0-10\\% Centrality, $v_2=0.05$, $\\widehat{p}_{\\mathrm{T}}> 100$ GeV,\n Anti-$k_{\\mathrm{T}}$, $R=0.4$, $p_{\\mathrm{T}}^{\\mathrm{jet}} > 100$ GeV.")
+    hist_ratio_plot(truth, reco, ics, bins=bins, xlabel='Jet Mass [GeV]',
+                    out_name=figs_dir / "jet_mass.png", xlim=(3, 140), annotation=annotation)
 
 
-def plot_girth(obs_dir, figs_dir):
-    """Plot jet girth distribution and ratio."""
+def plot_girth(obs_dir: Path, figs_dir: Path):
     truth = np.load(obs_dir / "truth_girth.npy")
-    reco = np.load(obs_dir / "reco_girth.npy")
-    ics = np.load(obs_dir / "ics_girth.npy")
+    reco  = np.load(obs_dir / "reco_girth.npy")
+    ics   = np.load(obs_dir / "ics_girth.npy")
     bins = np.linspace(0.05, 0.25, 19)
-
-    fig, ax_main, ax_ratio = create_ratio_axes()
-    n_reco, _, _ = ax_main.hist(
-        reco, bins,
-        histtype='step', linewidth=2, linestyle='dashed',
-        label='\\textsc{DeepSub} (Ours)', density=True, color='red'
-    )
-    n_truth, _, _ = ax_main.hist(
-        truth, bins, alpha=0.5,
-        label='Truth', density=True
-    )
-    n_ics, _, _ = ax_main.hist(
-        ics, bins,
-        histtype='step', linewidth=2, linestyle='dashed',
-        label='Event-Wide ICS', density=True, color='green'
-    )
-    ax_main.set_yscale('log')
-    ax_main.set_xlim(0.05, 0.25)
-    ax_main.set_ylim(0.5, 10)
-    ax_main.set_ylabel('Events [a.u.]', fontsize=30)
-    ax_main.legend(loc='upper right', fontsize=18)
-
-    ax_ratio.set_xlabel('Jet Girth', fontsize=30)
-    ax_ratio.set_ylabel(r'$\\frac{\\textrm{Predicted}}{\\textrm{Truth}}$', fontsize=30)
-    ratio = n_reco / n_truth
-    ratio_ics = n_ics / n_truth
-    ax_ratio.hist(
-        bins[:-1], bins, weights=ratio,
-        histtype='step', linewidth=2, linestyle='dashed', color='red'
-    )
-    ax_ratio.hist(
-        bins[:-1], bins, weights=ratio_ics,
-        histtype='step', linewidth=2, linestyle='dashed', color='green'
-    )
-    ax_ratio.plot([0, 123232323], [1, 1], color='black', linestyle='dashed')
-    ax_ratio.set_ylim([0, 2])
-
-    ax_main.text(
-        0.075, 1.45,
-        "\\textsc{Jewel} Dijets, $\\sqrt{s_{\\mathrm{NN}}}=5.02$ TeV,\n"
-        "0-10\\% Centrality, $v_2=0.05$, $\\widehat{p}_{\\mathrm{T}}> 100$ GeV,\n"
-        "Anti-$k_{\\mathrm{T}}$, $R=0.4$, $p_{\\mathrm{T}}^{\\mathrm{jet}} > 100$ GeV.",
-        fontsize=18
-    )
-
-    out_path = figs_dir / "jet_girth.png"
-    fig.savefig(out_path, bbox_inches='tight', dpi=200)
-    print(f"Saved {out_path}")
-    plt.close(fig)
+    annotation = (0.075, 0.65, "\\textsc{Jewel} Dijets, $\\sqrt{s_{\\mathrm{NN}}}=5.02$ TeV,\n0-10\\% Centrality, $v_2=0.05$, $\\widehat{p}_{\\mathrm{T}}> 100$ GeV,\n Anti-$k_{\\mathrm{T}}$, $R=0.4$, $p_{\\mathrm{T}}^{\\mathrm{jet}} > 100$ GeV.")
+    hist_ratio_plot(truth, reco, ics, bins=bins, xlabel='Jet Girth',
+                    out_name=figs_dir / "jet_girth.png", xlim=(0.05, 0.25), annotation=annotation)
 
 
-def plot_ecf(obs_dir, figs_dir):
-    """Plot energy correlation function (ECF) distribution and ratio."""
+def plot_ecf(obs_dir: Path, figs_dir: Path):
     truth = np.load(obs_dir / "truth_ecf.npy")
-    reco = np.load(obs_dir / "reco_ecf.npy")
-    ics = np.load(obs_dir / "ics_ecf.npy")
+    reco  = np.load(obs_dir / "reco_ecf.npy")
+    ics   = np.load(obs_dir / "ics_ecf.npy")
     bins = np.logspace(3, 6, 21)
-
-    fig, ax_main, ax_ratio = create_ratio_axes()
-    n_reco, _, _ = ax_main.hist(
-        reco, bins,
-        histtype='step', linewidth=2, linestyle='dashed',
-        label='\\textsc{DeepSub} (Ours)', density=True, color='red'
-    )
-    n_truth, _, _ = ax_main.hist(
-        truth, bins, alpha=0.5,
-        label='Truth', density=True
-    )
-    n_ics, _, _ = ax_main.hist(
-        ics, bins,
-        histtype='step', linewidth=2, linestyle='dashed',
-        label='Event-Wide ICS', density=True, color='green'
-    )
-    ax_main.set_yscale('log')
-    ax_main.set_xscale('log')
-    ax_main.set_xlim(3e3, 1e6)
-    ax_main.set_ylabel('Events [a.u.]', fontsize=30)
-    ax_main.legend(loc='upper right', fontsize=18)
-
-    ax_ratio.set_xlabel(r'$\\mathrm{ECF}_{N=2}^{\\beta=2}$', fontsize=30)
-    ax_ratio.set_ylabel(r'$\\frac{\\textrm{Predicted}}{\\textrm{Truth}}$', fontsize=30)
-    ratio = n_reco / n_truth
-    ratio_ics = n_ics / n_truth
-    ax_ratio.hist(
-        bins[:-1], bins, weights=ratio,
-        histtype='step', linewidth=2, linestyle='dashed', color='red'
-    )
-    ax_ratio.hist(
-        bins[:-1], bins, weights=ratio_ics,
-        histtype='step', linewidth=2, linestyle='dashed', color='green'
-    )
-    ax_ratio.plot([0, 123232323], [1, 1], color='black', linestyle='dotted')
-    ax_ratio.set_ylim([0, 2])
-    ax_ratio.set_xscale('log')
-
-    ax_main.text(
-        5000, 0.325e-8,
-        "\\textsc{Jewel} Dijets, $\\sqrt{s_{\\mathrm{NN}}}=5.02$ TeV,\n"
-        "0-10\\% Centrality, $v_2=0.05$, $\\widehat{p}_{\\mathrm{T}}> 100$ GeV,\n"
-        "Anti-$k_{\\mathrm{T}}$, $R=0.4$, $p_{\\mathrm{T}}^{\\mathrm{jet}} > 100$ GeV.",
-        fontsize=18
-    )
-
-    out_path = figs_dir / "ecf.png"
-    fig.savefig(out_path, bbox_inches='tight', dpi=400)
-    print(f"Saved {out_path}")
-    plt.close(fig)
+    annotation = (2.3 * 0.25e4, 0.225e-7, "\\textsc{Jewel} Dijets, $\\sqrt{s_{\\mathrm{NN}}}=5.02$ TeV,\n0-10\\% Centrality, $v_2=0.05$, $\\widehat{p}_{\\mathrm{T}}> 100$ GeV,\n Anti-$k_{\\mathrm{T}}$, $R=0.4$, $p_{\\mathrm{T}}^{\\mathrm{jet}} > 100$ GeV.")
+    hist_ratio_plot(truth, reco, ics, bins=bins, xlabel=r'$\\mathrm{ECF}_{N=2}^{\\beta=2}$',
+                    out_name=figs_dir / "ecf.png", xscale="log", xlim=(3e3, 1e6), annotation=annotation)
 
 
 def main():
@@ -280,4 +176,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

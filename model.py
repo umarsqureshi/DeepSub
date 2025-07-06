@@ -845,5 +845,6 @@ class SwinIR(nn.Module):
         for i, layer in enumerate(self.layers):
             flops += layer.flops()
         flops += H * W * 3 * self.embed_dim * self.embed_dim
-        flops += self.upsample.flops()
+        if upsample:
+            flops += self.upsample.flops()
         return flops
